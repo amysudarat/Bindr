@@ -14,6 +14,6 @@ Bindr is the application designed to help the reader and books that will be give
 - Based on Nugat 7.0
 
 # Contributor
-- Sudarat Tangnimitchok (Amy)
+- Sudarat Tangnimitchok (Github ID: amysudarat)
 - Ruben Munoz (Github ID: Rubecube)
 - Cristian Cepeda (Github ID: CristianCepeda)
