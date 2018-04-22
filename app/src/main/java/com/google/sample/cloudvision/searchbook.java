@@ -1,4 +1,6 @@
-package com.google.sample.cloudvision;
+/*package com.google.sample.cloudvision;
+
+import com.android.volley.R;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -12,8 +14,8 @@ public class searchbook {
         // Instantiate the RequestQueue.
         String url = "https://www.googleapis.com/books/v1/volumes?q=book+intitle:"+val+"&PrintType=books&orderBy=relevance&key=AIzaSyAWFmdp7t7_MtY8GbVdW3rYCR3zMbOcRuo";
         //textView.setText("Response is:");
-        MainActivity hi = new MainActivity();
-        RequestQueue queue = Volley.newRequestQueue(hi);
+        //MainActivity hi = new MainActivity();
+        //RequestQueue queue = Volley.newRequestQueue(hi);
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -25,12 +27,12 @@ public class searchbook {
                         start = response.indexOf("authors");
                         stop = response.indexOf("],",start+8);
                         // text box with the author
-                        hi.xtextView.setText(response.substring(start+12,stop-2));
+                        //hi.xtextView.setText(response.substring(start+12,stop-2));
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                hi.xtextView.setText("That didn't work!");
+               // hi.xtextView.setText("That didn't work!");
             }
         });
         queue.add(stringRequest);
@@ -38,4 +40,4 @@ public class searchbook {
     }
 
 
-}
+}*/

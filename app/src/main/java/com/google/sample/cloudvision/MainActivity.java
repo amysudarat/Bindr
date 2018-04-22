@@ -31,9 +31,21 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.support.v7.widget.AppCompatButton;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -51,18 +63,20 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.TextAnnotation;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
-
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        View.OnClickListener {
     private static final String CLOUD_VISION_API_KEY = BuildConfig.API_KEY;
     public static final String FILE_NAME = "temp.jpg";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
@@ -79,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mImageDetails;
     ImageView mMainImage;
     static TextView xtextView;
-    static String googleReturn;
+    static String val;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,17 +103,72 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         xtextView =  findViewById(R.id.textView2);
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder
-                    .setMessage(R.string.dialog_select_prompt)
-                    .setPositiveButton(R.string.dialog_select_gallery, (dialog, which) -> startGalleryChooser())
-                    .setNegativeButton(R.string.dialog_select_camera, (dialog, which) -> startCamera());
-            builder.create().show();
-        });
+        fab.setOnClickListener(this); // calling onClick() method
+        android.support.v7.widget.AppCompatButton _sendRequest = findViewById(R.id.send_request);
+        _sendRequest.setOnClickListener(this); // calling onClick() method
 
         mImageDetails = findViewById(R.id.image_details);
         mMainImage = findViewById(R.id.main_image);
+    }
+
+
+
+
+
+    @Override
+    public void onClick(View v) {
+        // handling onClick Events
+        switch (v.getId()) {
+
+            case R.id.fab:
+                // code for button when user clicks buttonOne.
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder
+                        .setMessage(R.string.dialog_select_prompt)
+                        .setPositiveButton(R.string.dialog_select_gallery, (dialog, which) -> startGalleryChooser())
+                        .setNegativeButton(R.string.dialog_select_camera, (dialog, which) -> startCamera());
+                builder.create().show();
+                break;
+
+            case R.id.send_request:
+                // do your code
+                val = val.replace("\n","%20");
+                val = val.replace(" ","%20");
+                val = val.substring(0,20);
+                String url = "https://www.googleapis.com/books/v1/volumes?q=book+intitle:"+val+"&PrintType=books&orderBy=relevance&key=AIzaSyAWFmdp7t7_MtY8GbVdW3rYCR3zMbOcRuo";
+//                String url = "https://www.googleapis.com/books/v1/volumes?q=book+intitle:harry%20potter&key=AIzaSyAWFmdp7t7_MtY8GbVdW3rYCR3zMbOcRuo";
+
+                // Instantiate the RequestQueue.
+                RequestQueue queue = Volley.newRequestQueue(this);
+                //this is the url where you want to send the request
+                //TODO: replace with your own url to send request, as I am using my own localhost for this tutorial
+
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                // Display the response string.
+                                //xtextView.setText(response);
+                                int start, stop;
+                                start = response.indexOf("authors");
+                                stop = response.indexOf("],",start+8);
+                                // text box with the author
+                                xtextView.setText(response.substring(start+12,stop-2));
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        xtextView.setText("That didn't work!");
+                    }
+                });
+                // Add the request to the RequestQueue.
+                queue.add(stringRequest);
+                break;
+
+            default:
+                break;
+        }
     }
 
     public void startGalleryChooser() {
@@ -287,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
         mImageDetails.setText(R.string.loading_message);
@@ -337,10 +407,7 @@ public class MainActivity extends AppCompatActivity {
         final TextAnnotation texts = response.getResponses().get(0).getFullTextAnnotation();
         if (texts != null) {
             message.append(texts.getText());
-
-            // get text
-            searchbook hi = new searchbook();
-            hi.sendPost(texts.getText());
+            val = texts.getText();
 
         } else {
             message.append("nothing");
