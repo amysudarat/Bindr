@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -94,11 +95,21 @@ public class MainActivity extends AppCompatActivity implements
     ImageView mMainImage;
     static TextView xtextView;
     static String val;
+    private static int SPLASH_TIME_OUT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*ADDED THIS TO THE FILE*/
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Intent homeIntent = new Intent(SplashPage.this, MainActivity.class);
+//                startActivity(homeIntent);
+//                finish();
+//            }
+//        }, SPLASH_TIME_OUT);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         xtextView =  findViewById(R.id.textView2);
