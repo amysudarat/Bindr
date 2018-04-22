@@ -60,6 +60,8 @@ import java.util.List;
 import java.util.Locale;
 
 
+
+
 public class MainActivity extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = BuildConfig.API_KEY;
     public static final String FILE_NAME = "temp.jpg";
@@ -74,8 +76,10 @@ public class MainActivity extends AppCompatActivity {
     public static final int CAMERA_PERMISSIONS_REQUEST = 2;
     public static final int CAMERA_IMAGE_REQUEST = 3;
 
-    private TextView mImageDetails;
-    private ImageView mMainImage;
+    TextView mImageDetails;
+    ImageView mMainImage;
+    static TextView xtextView;
+    static String googleReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        xtextView =  findViewById(R.id.textView2);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -317,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
 
-    private static String convertResponseToString(BatchAnnotateImagesResponse response) {
+    private  static String convertResponseToString(BatchAnnotateImagesResponse response) {
         StringBuilder message = new StringBuilder("I found these things:\n\n");
 
      /*   List<EntityAnnotation> labels = response.getResponses().get(0).getLabelAnnotations();
@@ -333,6 +337,11 @@ public class MainActivity extends AppCompatActivity {
         final TextAnnotation texts = response.getResponses().get(0).getFullTextAnnotation();
         if (texts != null) {
             message.append(texts.getText());
+
+            // get text
+            searchbook hi = new searchbook();
+            hi.sendPost(texts.getText());
+
         } else {
             message.append("nothing");
         }
@@ -340,4 +349,6 @@ public class MainActivity extends AppCompatActivity {
 
         return message.toString();
     }
+
+
 }
